@@ -26,58 +26,161 @@ struct ContentView: View {
                     .cornerRadius(10)
             })
             Spacer()
-         
+            
         }
     }
     
     
-    
+}
     
     
     //navbar view
-    struct NavbarView: View {
-        @Binding var cartCount: Int
+struct NavbarView: View {
+    @Binding var cartCount: Int
+    @State var toggleMenu: Bool = false
+
+    var body: some View {
+        HStack {
+            // Menu button
+            Button(action: {
+                toggleMenu.toggle()
+            }, label: {
+                Image("menu")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 40, height: 40)
+            })
+
+            Spacer()
+
+            // Cart icon with badge
+            Image(systemName: "cart")
+                .padding(.horizontal, 20)
+                .overlay(
+                    ZStack {
+                        Circle()
+                            .fill(.primary)
+                            .frame(width: 20, height: 20)
+                        Text("\(cartCount)")
+                            .font(.caption)
+                            .foregroundStyle(.white)
+                    }
+                    .offset(x: 13, y: -13)
+                )
+
+            // Profile icon
+            Image(systemName: "person")
+        }
+        .foregroundStyle(.blue)
+        .padding(.horizontal, 30)
+        .font(.largeTitle)
+
+//         using sheet but it does not provide custom animation
+        .sheet(isPresented: $toggleMenu, content: {
+            MenuBarScreen(toggleMenu: $toggleMenu)
+                
+        })
         
-        @State var showProfile: Bool = false
+     
+       
+       
+    }
+}
+
+    
+    
+    //Menu bar screen
+    struct MenuBarScreen: View {
+        @Binding var toggleMenu: Bool
+     
         var body: some View {
-            //                navbar
-            HStack {
-                Image(systemName: "inset.filled.tophalf.bottomhalf.rectangle")
-                Spacer()
-                Image(systemName: "cart")
-                    .padding(.horizontal, 20)
-                    .overlay(
-                        ZStack {
-                            Circle()
-                                .fill(.primary)
-                                .frame(width:20, height: 20)
-                            Text("\(cartCount)")
-                                .font(.caption)
-                                .foregroundStyle(.white)
-                        }
-                            .offset(x:13,y:-13)
-                    )
+            ZStack(alignment: .topLeading) {
+                
+                Color.blue.opacity(0.1)
+//                    .frame(width:300, alignment: .leading)
+                    .cornerRadius(20)
+                    .edgesIgnoringSafeArea(.bottom)
                 
                 
-                Button(action: {
-                    showProfile.toggle()
-                }, label: {
-                    Image(systemName: "person")
+                HStack {
+                    Image(systemName: "person.fill")
+                    Text("Hi Jason!")
+                        .fontWeight(.bold)
+                        .fontDesign(.monospaced)
+                    Spacer()
+                    Button(action:{
+                        toggleMenu = false
+                    }, label:{
+                        Image(systemName: "xmark")
+                            .foregroundStyle(.primary)
+                    })
+                    .frame(width:40, height: 40)
+                    .background(.red)
+                    .cornerRadius(50)
+                   
+                    
+                }
+                .font(.title)
+                .foregroundStyle(.primary)
+                .padding()
+                .padding(.horizontal, 20)
+            
+                
+                VStack(alignment: .leading, spacing: 10) {
+                 
+                    Button(action:{}, label: {
+                        Text("Categories")
+                        Image(systemName: "chevron.down")
+                    })
+                    .foregroundStyle(.secondary)
+                    .font(.largeTitle)
+                   
+                
+                    Text("Men's")
+                        .font(.title)
+                    
+                    Divider()
+                        .frame(width:200, height: 2)
+                        .background(.secondary)
+                        
+                    Text("Women's")
+                        .font(.title)
+                    Divider()
+                        .frame(width:200, height: 2)
+                        .background(.secondary)
+                    Text("Kids")
+                        .font(.title)
+                    Divider()
+                        .frame(width:200, height: 2)
+                        .background(.secondary)
+                    
+                }
+                .foregroundStyle(.primary)
+                .fontWeight(.semibold)
+                .offset(x: 30, y:100)
+                
+                Button(action:{}, label: {
+                    Text("Logout")
+                        .font(.title2)
+                        .foregroundStyle(.white)
                 })
+                .padding()
+                .padding(.horizontal, 20)
+                .background(.red)
+                .cornerRadius(10)
+                .offset(x: 40, y: 750)
                 
-                .sheet(isPresented: $showProfile, content: {
-                    ProfileScreen(showProfile: $showProfile)
-                        .presentationDetents([.height(400)])
-                        .animation(.smooth)
-                       
-                })
                 
             }
-            .foregroundStyle(.blue)
-            .padding(.horizontal, 30)
-            .font(.largeTitle)
+         
+            
+        
         }
     }
+    
+    
+    
     
     struct ProfileScreen: View {
         @Binding var showProfile: Bool
@@ -181,10 +284,13 @@ struct ContentView: View {
     
     
     
-}
+
+
+
 
 #Preview {
-    
+ 
+//    MenuBarScreen()
     ContentView()
     
 }
